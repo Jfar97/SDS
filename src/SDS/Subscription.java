@@ -66,4 +66,8 @@ public class Subscription {
 		return this.location;
 	}
 
+	public void fulfill() {
+		this.quantity = 0;
+	}
+
 }

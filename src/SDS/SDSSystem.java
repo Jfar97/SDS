@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 public class SDSSystem {
 
@@ -58,15 +59,28 @@ public class SDSSystem {
 
 		// dates
 		String startString = parts[4].trim();
-		LocalDateTime start = LocalDateTime.parse(startString, formatter);
+		LocalDateTime start;
 		String endString = parts[5].trim();
-		LocalDateTime end = LocalDateTime.parse(endString, formatter);
+		LocalDateTime end;
+
+		try {
+			start = LocalDateTime.parse(startString, formatter);
+			end = LocalDateTime.parse(endString, formatter);
+		}
+		catch(DateTimeParseException DateTimeError) {
+			return;
+		}
 
 		// Location (if available)
 		CampusLocation location = null;
 		if(parts.length >= 7) {
 			String locationString = parts[6].trim();
-			location = CampusLocation.fromString(locationString);
+			if (!locationString.isEmpty()) {
+				location = CampusLocation.fromString(locationString);
+				if (location == null) {
+					return;	
+    			}
+			}
 		}
 
 		if(checkForDiner(dinerName.toLowerCase()) == false) {
@@ -106,13 +120,24 @@ public class SDSSystem {
 
 		// dates
 		String startString = parts[4].trim();
-		LocalDateTime start = LocalDateTime.parse(startString, formatter);
+		LocalDateTime start;
 		String endString = parts[5].trim();
-		LocalDateTime end = LocalDateTime.parse(endString, formatter);
+		LocalDateTime end;
+
+		try {
+			start = LocalDateTime.parse(startString, formatter);
+			end = LocalDateTime.parse(endString, formatter);
+		}
+		catch(DateTimeParseException DateTimeError) {
+			return;
+		}
 
 		// Location
 		String locationString = parts[6].trim();
 		CampusLocation location = CampusLocation.fromString(locationString);
+		if (location == null) {
+			return;
+		}
 
 		// Check if restaurant already exists
 		if(checkForRestaurant(restaurantName.toLowerCase()) == false) {

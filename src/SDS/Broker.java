@@ -44,6 +44,7 @@ public class Broker {
 			subList.add(subscription);
 		}
 
+		//logSubscription(subscription);
 		matchNewSubscription(subscription);
 	}
 
@@ -65,7 +66,49 @@ public class Broker {
 			foodList.add(publication);
 		}
 
+		//logFoodItem(publication);
 		matchNewFoodItem(publication);
+	}
+
+	public void logFoodItem(FoodItem food) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm");
+
+		String message = String.format(
+            "food item of %d %s available at %s in %s between %s and %s.",
+            food.getQuantity(),
+            food.getItemName(),
+            food.getRestaurant(),
+            food.getLocation().getDisplayName(),
+            food.getAvailabilityStart().format(formatter),
+            food.getAvailabilityEnd().format(formatter)
+        );
+
+        notifications.add(message);
+	}
+
+	public void logSubscription(Subscription food) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm");
+
+		CampusLocation location = food.getLocation();
+		String locationName;
+		if(location == null) {
+			locationName = "no location";
+		}
+		else {
+			locationName = location.getDisplayName();
+		}
+
+		String message = String.format(
+            "subscription of %d %s for %s in %s between %s and %s.",
+            food.getQuantity(),
+            food.getItem(),
+            food.getDiner(),
+            locationName,
+            food.getStart().format(formatter),
+            food.getEnd().format(formatter)
+        );
+
+        notifications.add(message);
 	}
 
 	public void addNotification(String dinerName, int amount, FoodItem food) {
@@ -151,6 +194,8 @@ public class Broker {
 				break;
 			}
 		}
+
+		subscription.fulfill();
 	}
 
 	public void matchNewFoodItem(FoodItem food) {
@@ -161,6 +206,9 @@ public class Broker {
 
 		List<Subscription> subsToFood = subscriptions.get(foodItem);
 		for(Subscription currSub : subsToFood) {
+			if(currSub.getQuantity() == 0) {
+				continue;
+			}
 			matchNewSubscription(currSub);
 		}
 	}
