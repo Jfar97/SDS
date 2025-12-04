@@ -55,7 +55,16 @@ public class SDSSystem {
 
 		// quantity from input
 		String quantityString = parts[3].trim();
-		int quantity = Integer.parseInt(quantityString);
+		int quantity;
+		try {
+			quantity = Integer.parseInt(quantityString);
+		}
+		catch(NumberFormatException numberFormatError) {
+			return;
+		}
+		if(quantity <= 0) {
+			return;
+		}
 
 		// dates
 		String startString = parts[4].trim();
@@ -116,7 +125,16 @@ public class SDSSystem {
 
 		// quantity from input
 		String quantityString = parts[3].trim();
-		int quantity = Integer.parseInt(quantityString);
+		int quantity;
+		try {
+			quantity = Integer.parseInt(quantityString);
+		}
+		catch(NumberFormatException numberFormatError) {
+			return;
+		}
+		if(quantity <= 0) {
+			return;
+		}
 
 		// dates
 		String startString = parts[4].trim();
